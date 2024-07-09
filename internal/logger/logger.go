@@ -68,6 +68,10 @@ func Init() error {
 
 func openLogFile() error {
 	var err error
+	err = os.MkdirAll(filepath.Dir(logPath), os.ModePerm)
+	if err != nil {
+		return err
+	}
 	logFile, err = os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	return err
 }

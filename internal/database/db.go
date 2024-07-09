@@ -11,25 +11,11 @@ import (
 	"log"
 	"string_backend_0001/internal/conf"
 	logger2 "string_backend_0001/internal/logger"
-	"string_backend_0001/internal/model"
 	"strings"
 	"time"
 )
 
 var db *gorm.DB
-
-func Close() error {
-	if db == nil {
-		return nil
-	}
-
-	s, err := db.DB()
-	if err != nil {
-		return err
-	}
-
-	return s.Close()
-}
 
 func Init() error {
 	var err error
@@ -39,7 +25,7 @@ func Init() error {
 		SlowThreshold:             time.Second,
 		LogLevel:                  logger.Info,
 		IgnoreRecordNotFoundError: true,
-		Colorful:                  true,
+		Colorful:                  false,
 	})
 
 	gormConfig := &gorm.Config{
@@ -75,9 +61,22 @@ func Init() error {
 		err = fmt.Errorf("not supported database type: %s", database.Type)
 	}
 
+	return err
+}
+
+func Close() error {
+	if db == nil {
+		return nil
+	}
+
+	s, err := db.DB()
 	if err != nil {
 		return err
 	}
 
-	return db.AutoMigrate(model.GetModels()...)
+	return s.Close()
+}
+
+func GetDB() *gorm.DB {
+	return db
 }

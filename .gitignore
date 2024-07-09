@@ -1,0 +1,9 @@
+/docs/
+database.db*
+config.json
+backend.log
+.idea
+.vscode
+
+# google client secret
+client_secret_*.json

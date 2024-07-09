@@ -7,6 +7,7 @@ import (
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/database"
 	"string_backend_0001/internal/logger"
+	"string_backend_0001/internal/model"
 )
 
 // 初始化設定
@@ -53,5 +54,9 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-	return nil
+
+	db := database.GetDB()
+
+	err = db.AutoMigrate(model.GetModels()...)
+	return err
 }

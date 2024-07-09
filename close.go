@@ -7,6 +7,7 @@ import (
 )
 
 func Close() {
+	logger.Info("Server is shutting down...")
 	err := database.Close()
 	if err != nil {
 		log.Println(err)

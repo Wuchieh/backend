@@ -9,6 +9,8 @@ import (
 	_ "string_backend_0001/docs"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/pkg"
+	"string_backend_0001/internal/web/google"
+	"string_backend_0001/internal/web/user"
 )
 
 func Run() error {
@@ -24,6 +26,13 @@ func router(r *gin.Engine) {
 
 	api := r.Group("/api")
 	api.GET("/hello", helloWorld)
+
+	// 若不想使用 google oauth2 請註釋掉下列兩行
+	googleApi := api.Group("/google")
+	google.Router(googleApi)
+
+	userApi := api.Group("/user")
+	user.Router(userApi)
 }
 
 // @summary hello world
