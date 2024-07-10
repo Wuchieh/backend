@@ -1,12 +1,11 @@
 # Golang Backend Template
 
-[中文](README_TW.md) | 英文
+[中文](README_TW.md) | English
 
 ### Package name: string_backend_0001
 
-```
 It is recommended to use global replacement of "string_backend_0001" with your own package name before use.
-```
+
 
 ## Installed Packages
 

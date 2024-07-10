@@ -1,12 +1,10 @@
 # Golang 後端模板
 
-中文 | [英文](README.md)
+中文 | [English](README.md)
 
 ### 包名 string_backend_0001
 
-```
 要使用前建議使用全局替換 "string_backend_0001" 成自己的包名稱
-```
 
 ## 已安裝的包
 
