@@ -1,12 +1,10 @@
-package google
+package line
 
 import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	Oauth2 "google.golang.org/api/oauth2/v2"
 	"net/http"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/pkg"
@@ -18,17 +16,22 @@ var (
 
 const (
 	STATE        = "state"
-	Oauth2APIUrl = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
+	Oauth2APIUrl = "https://api.line.me/v2/profile"
 )
 
 func NewGoogleOAuthConfig() *oauth2.Config {
-	googleConf := conf.Conf.GoogleOauth
+	lineConf := conf.Conf.LineOauth
 	return &oauth2.Config{
-		ClientID:     googleConf.ClientID,
-		ClientSecret: googleConf.ClientSecret,
-		RedirectURL:  googleConf.RedirectURL,
-		Scopes:       googleConf.Scopes,
-		Endpoint:     google.Endpoint,
+		ClientID:     lineConf.ClientID,
+		ClientSecret: lineConf.ClientSecret,
+		RedirectURL:  lineConf.RedirectURL,
+		Scopes:       lineConf.Scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://access.line.me/oauth2/v2.1/authorize",
+			TokenURL: "https://api.line.me/oauth2/v2.1/token",
+			//DeviceAuthURL: "https://oauth2.googleapis.com/device/code",
+			AuthStyle: oauth2.AuthStyleInParams,
+		},
 	}
 }
 
@@ -36,10 +39,6 @@ func Router(r *gin.RouterGroup) {
 	cfg = NewGoogleOAuthConfig()
 	r.GET("/callback", callback)
 	r.GET("/login", login)
-}
-
-func login(c *gin.Context) {
-	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
 }
 
 func callback(c *gin.Context) {
@@ -50,7 +49,7 @@ func callback(c *gin.Context) {
 	}
 
 	code := c.Query("code")
-	userInfo, err := getUserDataFromGoogle(code)
+	userInfo, err := getUserDataFromLine(code)
 	if err != nil {
 		c.JSON(pkg.CreateResponse(http.StatusBadRequest, err.Error()))
 		return
@@ -64,20 +63,28 @@ func callback(c *gin.Context) {
 	c.JSON(pkg.CreateSuccessResponse(userInfo))
 }
 
-func getUserDataFromGoogle(code string) (*Oauth2.Userinfo, error) {
+func login(c *gin.Context) {
+	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
+}
+
+func getUserDataFromLine(code string) (*Profile, error) {
 	token, err := cfg.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
 	}
 
-	response, err := http.Get(Oauth2APIUrl + token.AccessToken)
+	client := http.Client{}
+	req, _ := http.NewRequest(http.MethodGet, Oauth2APIUrl, nil)
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+	response, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
 
 	defer func() { response.Body.Close() }()
 
-	var o Oauth2.Userinfo
+	var o Profile
 	err = pkg.RespUnmarshal(response, &o)
 	if err != nil {
 		return nil, err

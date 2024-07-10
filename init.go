@@ -35,6 +35,17 @@ func initConfig() error {
 		return err
 	}
 
+	//go func() {
+	//	if marshal, err := json.MarshalIndent(conf.Conf, "", "  "); err != nil {
+	//		return
+	//	} else {
+	//		err = os.WriteFile(configFile, marshal, os.ModePerm)
+	//		if err != nil {
+	//			return
+	//		}
+	//	}
+	//}()
+
 	return nil
 }
 
