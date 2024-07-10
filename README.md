@@ -16,7 +16,7 @@
 
 * 上手簡單
 * 附常用方法 internal/pkg
-* 內置簡易 internal/logger
+* 內置簡易Logger internal/logger
 * Google Oauth2 登入
 * Line Oauth2 登入
 
