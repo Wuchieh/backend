@@ -1,28 +1,30 @@
-# Golang 後端模板
+# Golang Backend Template
 
-### 包名 string_backend_0001
+[中文](README_TW.md) | 英文
+
+### Package name: string_backend_0001
 
 ```
-要使用前建議使用全局替換 "string_backend_0001" 成自己的包名稱
+It is recommended to use global replacement of "string_backend_0001" with your own package name before use.
 ```
 
-## 已安裝的包
+## Installed Packages
 
 * [gin](https://github.com/gin-gonic/gin)
 * [gorm](https://gorm.io/index.html)
 * [swag](https://github.com/swaggo/swag)
 
-## 特色
+## Features
 
-* 上手簡單
-* 附常用方法 internal/pkg
-* 內置簡易Logger internal/logger
-* Google Oauth2 登入
-* Line Oauth2 登入
+* Easy to get started
+* Includes common methods in internal/pkg
+* Built-in simple Logger in internal/logger
+* Google OAuth2 login
+* Line OAuth2 login
 
-## 使用
+## Usage
 
-### 初始化
+### Initialization
 
 ```shell
 git clone https://github.com/Wuchieh/backend.git
@@ -30,7 +32,7 @@ cd backend
 go mod init
 ```
 
-### 執行
+### Execution
 
 ```shell
 swag init

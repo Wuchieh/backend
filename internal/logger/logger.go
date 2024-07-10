@@ -163,7 +163,7 @@ func output(logLevel int, format string, v ...interface{}) {
 		levelStr = "OTHER"
 	}
 
-	logMsg := fmt.Sprintf("[%s]\t| %s | %s:%d | %s", levelStr, now, filepath.Base(file), line, msg)
+	logMsg := fmt.Sprintf("%s | %s:%d | [%s] %s", now, filepath.Base(file), line, levelStr, msg)
 	logger.Println(logMsg)
 }
 
