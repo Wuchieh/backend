@@ -26,6 +26,7 @@
 
 ```shell
 git clone https://github.com/Wuchieh/backend.git
+cd backend
 go mod init
 ```
 
