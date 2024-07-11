@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/pkg"
-	"string_backend_0001/internal/web/line/sdk"
+	"string_backend_0001/lineOAuth2"
 )
 
 var (
@@ -26,7 +26,7 @@ func NewOAuthConfig() *oauth2.Config {
 		ClientSecret: lineConf.ClientSecret,
 		RedirectURL:  lineConf.RedirectURL,
 		Scopes:       lineConf.Scopes,
-		Endpoint:     sdk.Endpoint,
+		Endpoint:     lineOAuth2.Endpoint,
 	}
 }
 
@@ -61,13 +61,13 @@ func callback(c *gin.Context) {
 func login(c *gin.Context) {
 	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
 }
-func getUserDataFromLine(code string) (*sdk.Profile, error) {
+func getUserDataFromLine(code string) (*lineOAuth2.Profile, error) {
 	token, err := cfg.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
 	}
 
-	Oauth2 := sdk.CreateOauth2(token, code)
+	Oauth2 := lineOAuth2.CreateOauth2(token, code)
 
 	return Oauth2.GetProfile()
 }

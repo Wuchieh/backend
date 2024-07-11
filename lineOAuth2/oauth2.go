@@ -1,4 +1,4 @@
-package sdk
+package lineOAuth2
 
 import (
 	"bytes"
