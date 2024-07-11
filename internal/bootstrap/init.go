@@ -1,4 +1,4 @@
-package main
+package bootstrap
 
 import (
 	"errors"
@@ -8,6 +8,10 @@ import (
 	"string_backend_0001/internal/database"
 	"string_backend_0001/internal/logger"
 	"string_backend_0001/internal/model"
+)
+
+const (
+	configFile = "config.json"
 )
 
 // 初始化設定

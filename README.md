@@ -20,6 +20,7 @@ It is recommended to use global replacement of "string_backend_0001" with your o
 * Built-in simple Logger in internal/logger
 * Google OAuth2 login
 * Line OAuth2 login
+* Line OAuth2 SDK
 
 ## Usage
 
