@@ -1,5 +1,10 @@
 package conf
 
+import (
+	"string_backend_0001/sdk/discord"
+	"string_backend_0001/sdk/line"
+)
+
 type Web struct {
 	Host string `json:"host"`
 	Port int    `json:"port"`
@@ -35,12 +40,15 @@ type GoogleOauth Oauth
 
 type LineOauth Oauth
 
+type DiscordOauth Oauth
+
 type Config struct {
-	Web         Web         `json:"web"`
-	Log         Log         `json:"log"`
-	Database    Database    `json:"database"`
-	GoogleOauth GoogleOauth `json:"google"`
-	LineOauth   LineOauth   `json:"line"`
+	Web          Web          `json:"web"`
+	Log          Log          `json:"log"`
+	Database     Database     `json:"database"`
+	GoogleOauth  GoogleOauth  `json:"google"`
+	LineOauth    LineOauth    `json:"line"`
+	DiscordOauth DiscordOauth `json:"discord"`
 }
 
 func GetDefaultConfig() *Config {
@@ -67,7 +75,22 @@ func GetDefaultConfig() *Config {
 			ClientID:     "20xxxxxx94",
 			ClientSecret: "4bxxxxxxxxxxxxxxxxxxxxxxxxxxxx64",
 			RedirectURL:  "http://localhost:8080/api/line/callback",
-			Scopes:       []string{"profile"},
+			Scopes: line.GetScope(line.ScopeOption{
+				ProfileInformation: true,
+				IDToken:            false,
+				DisplayName:        false,
+				ProfileImageURL:    false,
+				EmailAddress:       false,
+			}),
+		},
+		DiscordOauth: DiscordOauth{
+			ClientID:     "93xxxxxxxxxxxxxx20",
+			ClientSecret: "Ehxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+			RedirectURL:  "http://localhost:8080/api/discord/callback",
+			Scopes: []string{
+				discord.ScopeIdentify,
+				discord.ScopeEmail,
+			},
 		},
 	}
 }

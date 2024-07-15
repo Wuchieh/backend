@@ -17,9 +17,13 @@
 * 上手簡單
 * 附常用方法 internal/pkg
 * 內置簡易Logger internal/logger
-* Google OAuth2 登入
-* Line OAuth2 登入
-* Line OAuth2 SDK
+* 內建 OAuth2
+
+## OAuth2 支持
+
+* Line
+* Google
+* Discord
 
 ## 使用
 

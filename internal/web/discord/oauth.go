@@ -1,14 +1,12 @@
-package line
+package discord
 
 import (
-	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"net/http"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/pkg"
-	"string_backend_0001/sdk/line"
+	"string_backend_0001/sdk/discord"
 )
 
 var (
@@ -20,13 +18,13 @@ const (
 )
 
 func NewOAuthConfig() *oauth2.Config {
-	lineConf := conf.Conf.LineOauth
+	Conf := conf.Conf.DiscordOauth
 	return &oauth2.Config{
-		ClientID:     lineConf.ClientID,
-		ClientSecret: lineConf.ClientSecret,
-		RedirectURL:  lineConf.RedirectURL,
-		Scopes:       lineConf.Scopes,
-		Endpoint:     line.Endpoint,
+		ClientID:     Conf.ClientID,
+		ClientSecret: Conf.ClientSecret,
+		RedirectURL:  Conf.RedirectURL,
+		Scopes:       Conf.Scopes,
+		Endpoint:     discord.Endpoint,
 	}
 }
 
@@ -34,6 +32,10 @@ func Router(r *gin.RouterGroup) {
 	cfg = NewOAuthConfig()
 	r.GET("/callback", callback)
 	r.GET("/login", login)
+}
+
+func login(c *gin.Context) {
+	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
 }
 
 func callback(c *gin.Context) {
@@ -44,13 +46,13 @@ func callback(c *gin.Context) {
 	}
 
 	code := c.Query("code")
-	userInfo, err := getUserDataFromLine(code)
+	userInfo, err := getUserData(code)
 	if err != nil {
 		c.JSON(pkg.CreateResponse(http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	c.Set(pkg.Line, userInfo)
+	c.Set(pkg.Discord, userInfo)
 	c.Next()
 	if c.IsAborted() {
 		return
@@ -58,17 +60,12 @@ func callback(c *gin.Context) {
 	c.JSON(pkg.CreateSuccessResponse(userInfo))
 }
 
-func login(c *gin.Context) {
-	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
-}
-
-func getUserDataFromLine(code string) (*line.Profile, error) {
-	token, err := cfg.Exchange(context.Background(), code)
+func getUserData(code string) (*discord.User, error) {
+	oauth := discord.NewOauth(cfg)
+	err := oauth.Exchange(code)
 	if err != nil {
-		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
+		return nil, err
 	}
-
-	Oauth2 := line.CreateOauth2(token, code)
-
-	return Oauth2.GetProfile()
+	data, err := oauth.GetUserData()
+	return data, err
 }

@@ -6,7 +6,6 @@
 
 It is recommended to use global replacement of "string_backend_0001" with your own package name before use.
 
-
 ## Installed Packages
 
 * [gin](https://github.com/gin-gonic/gin)
@@ -16,11 +15,15 @@ It is recommended to use global replacement of "string_backend_0001" with your o
 ## Features
 
 * Easy to get started
-* Includes common methods in internal/pkg
-* Built-in simple Logger in internal/logger
-* Google OAuth2 login
-* Line OAuth2 login
-* Line OAuth2 SDK
+* With common methods internal/pkg
+* Built-in simple logger internal/logger
+* Built-in OAuth2
+
+## OAuth2 support
+
+* Line
+* Google
+* Discord
 
 ## Usage
 

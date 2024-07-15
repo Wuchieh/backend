@@ -9,6 +9,7 @@ import (
 	_ "string_backend_0001/docs"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/pkg"
+	"string_backend_0001/internal/web/discord"
 	"string_backend_0001/internal/web/google"
 	"string_backend_0001/internal/web/line"
 	"string_backend_0001/internal/web/user"
@@ -32,8 +33,12 @@ func router(r *gin.Engine) {
 	googleApi := api.Group("/google")
 	google.Router(googleApi)
 
+	// 若不想使用 line oauth2 請註釋掉下列兩行
 	lineApi := api.Group("/line")
 	line.Router(lineApi)
+
+	discordApi := api.Group("discord")
+	discord.Router(discordApi)
 
 	userApi := api.Group("/user")
 	user.Router(userApi)

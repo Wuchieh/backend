@@ -6,7 +6,9 @@ import (
 )
 
 const (
-	Google = "GUserInfo"
+	Google  = "GUserInfo"
+	Line    = "LUserInfo"
+	Discord = "DUserInfo"
 )
 
 // GetGoogleUserinfo 取得 Userinfo
@@ -21,11 +23,4 @@ func GetGoogleUserinfo(c *gin.Context) (*oauth2.Userinfo, bool) {
 		return nil, false
 	}
 	return info, true
-}
-
-// GetGoogleUserinfoUnsafe 取得 Userinfo
-//
-//	此方法不安全 建議使用 GetGoogleUserinfo
-func GetGoogleUserinfoUnsafe(c *gin.Context) *oauth2.Userinfo {
-	return c.Keys[Google].(*oauth2.Userinfo)
 }

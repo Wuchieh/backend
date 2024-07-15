@@ -1,4 +1,4 @@
-package lineOAuth2
+package line
 
 import (
 	"bytes"
