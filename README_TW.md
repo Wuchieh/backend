@@ -16,7 +16,7 @@
 
 * 上手簡單
 * 附常用方法 internal/pkg
-* 內置簡易Logger internal/logger
+* 內置簡易 logger internal/logger
 * 內建 OAuth2
 
 ## OAuth2 支持
@@ -41,3 +41,6 @@ go mod init
 swag init
 go build . -o backend && ./backend
 ```
+
+## 注意!
+internal/web/oauth/oauth.go 僅測試用 請勿直接使用

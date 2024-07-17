@@ -9,7 +9,7 @@ import (
 	Oauth2 "google.golang.org/api/oauth2/v2"
 	"net/http"
 	"string_backend_0001/internal/conf"
-	"string_backend_0001/internal/pkg"
+	"string_backend_0001/pkg"
 )
 
 var (
@@ -29,6 +29,18 @@ func NewGoogleOAuthConfig() *oauth2.Config {
 		RedirectURL:  googleConf.RedirectURL,
 		Scopes:       googleConf.Scopes,
 		Endpoint:     google.Endpoint,
+	}
+}
+
+func GetOauth2Config() *oauth2.Config {
+	return cfg
+}
+
+func GetData(code string, config ...*oauth2.Config) (*Oauth2.Userinfo, error) {
+	if len(config) == 0 {
+		return getUserDataFromGoogle(code)
+	} else {
+		return getUserDataFromGoogle(code, config[0])
 	}
 }
 
@@ -64,7 +76,15 @@ func callback(c *gin.Context) {
 	c.JSON(pkg.CreateSuccessResponse(userInfo))
 }
 
-func getUserDataFromGoogle(code string) (*Oauth2.Userinfo, error) {
+func getUserDataFromGoogle(code string, config ...*oauth2.Config) (*Oauth2.Userinfo, error) {
+	cfg := func() *oauth2.Config {
+		if len(config) > 0 {
+			return config[0]
+		} else {
+			return cfg
+		}
+	}()
+
 	token, err := cfg.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())

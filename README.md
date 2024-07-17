@@ -41,3 +41,6 @@ go mod init
 swag init
 go build . -o backend && ./backend
 ```
+
+## Attention!
+internal/web/oauth/oauth.go is for testing only, do not use it directly.

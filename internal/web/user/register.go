@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"string_backend_0001/internal/logger"
 	"string_backend_0001/internal/model"
-	"string_backend_0001/internal/pkg"
+	"string_backend_0001/pkg"
 )
 
 type RegisterReq struct {

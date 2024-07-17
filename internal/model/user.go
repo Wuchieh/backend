@@ -3,7 +3,7 @@ package model
 import (
 	"gorm.io/gorm"
 	"string_backend_0001/internal/database"
-	"string_backend_0001/internal/pkg"
+	"string_backend_0001/pkg"
 )
 
 type User struct {

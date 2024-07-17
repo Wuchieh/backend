@@ -8,11 +8,12 @@ import (
 	"net/http"
 	_ "string_backend_0001/docs"
 	"string_backend_0001/internal/conf"
-	"string_backend_0001/internal/pkg"
-	"string_backend_0001/internal/web/discord"
-	"string_backend_0001/internal/web/google"
-	"string_backend_0001/internal/web/line"
+	"string_backend_0001/internal/web/oauth"
+	"string_backend_0001/internal/web/oauth/discord"
+	"string_backend_0001/internal/web/oauth/google"
+	"string_backend_0001/internal/web/oauth/line"
 	"string_backend_0001/internal/web/user"
+	"string_backend_0001/pkg"
 )
 
 func Run() error {
@@ -42,6 +43,9 @@ func router(r *gin.Engine) {
 
 	userApi := api.Group("/user")
 	user.Router(userApi)
+
+	oauthApi := api.Group("/oauth")
+	oauth.Router(oauthApi)
 }
 
 // @summary hello world

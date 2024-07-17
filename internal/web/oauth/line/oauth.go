@@ -7,7 +7,7 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"string_backend_0001/internal/conf"
-	"string_backend_0001/internal/pkg"
+	"string_backend_0001/pkg"
 	"string_backend_0001/sdk/line"
 )
 
@@ -27,6 +27,18 @@ func NewOAuthConfig() *oauth2.Config {
 		RedirectURL:  lineConf.RedirectURL,
 		Scopes:       lineConf.Scopes,
 		Endpoint:     line.Endpoint,
+	}
+}
+
+func GetOauth2Config() *oauth2.Config {
+	return cfg
+}
+
+func GetData(code string, config ...*oauth2.Config) (*line.Profile, error) {
+	if len(config) == 0 {
+		return getUserDataFromLine(code)
+	} else {
+		return getUserDataFromLine(code, config[0])
 	}
 }
 
@@ -62,7 +74,15 @@ func login(c *gin.Context) {
 	c.Redirect(http.StatusFound, cfg.AuthCodeURL(STATE))
 }
 
-func getUserDataFromLine(code string) (*line.Profile, error) {
+func getUserDataFromLine(code string, config ...*oauth2.Config) (*line.Profile, error) {
+	cfg := func() *oauth2.Config {
+		if len(config) > 0 {
+			return config[0]
+		} else {
+			return cfg
+		}
+	}()
+
 	token, err := cfg.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
