@@ -65,11 +65,24 @@ const (
 	Line    = "line"
 )
 
+var getOauth = func(s func() *oauth2.Config) func() *oauth2.Config {
+	var o *oauth2.Config
+	return func() *oauth2.Config {
+		if o == nil {
+			o = new(oauth2.Config)
+			*o = *s()
+			web := conf.Conf.Web
+			o.RedirectURL = fmt.Sprintf("http://%s:%d/api/oauth/callback", web.Host, web.Port)
+		}
+		return o
+	}
+}
+
 var (
 	oauthConfigMap = map[string]func() *oauth2.Config{
-		Google:  google.GetOauth2Config,
-		Discord: discord.GetOauth2Config,
-		Line:    line.GetOauth2Config,
+		Google:  getOauth(google.GetOauth2Config),
+		Discord: getOauth(discord.GetOauth2Config),
+		Line:    getOauth(line.GetOauth2Config),
 	}
 
 	storeMap = make(map[string]*store)
@@ -98,11 +111,20 @@ func cors(c *gin.Context) {
 	c.Next()
 }
 
-type loginResp struct {
+type LoginResp struct {
 	ID       string `json:"id"`
 	Redirect string `json:"redirect"`
 }
 
+// @summary get oauth2 login data
+// @description platform = google | line | discord
+// @tags OAuth2
+// @id OAuth2Login
+// @accept json
+// @produce json
+// @param platform path string true "google | line | discord"
+// @success 200 {object} pkg.Response{data=LoginResp}
+// @router /api/oauth/login/{platform} [get]
 func login(c *gin.Context) {
 	platform := c.Param("platform")
 	p, ok := oauthConfigMap[platform]
@@ -112,20 +134,27 @@ func login(c *gin.Context) {
 		return
 	}
 
-	web := conf.Conf.Web
-	cfg := *p()
-	cfg.RedirectURL = fmt.Sprintf("http://%s:%d/api/oauth/callback", web.Host, web.Port)
+	cfg := p()
 
 	s := newStore()
 	s.Platform = platform
 	s.State = 1
 
-	c.JSON(pkg.CreateSuccessResponse(loginResp{
+	c.JSON(pkg.CreateSuccessResponse(LoginResp{
 		ID:       s.ID,
 		Redirect: cfg.AuthCodeURL(s.ID),
 	}))
 }
 
+// @summary get oauth2 user data
+// @description id from OAuth2Login
+// @tags OAuth2
+// @id OAuth2GetData
+// @accept json
+// @produce json
+// @param id path string true "id"
+// @success 200 {object} pkg.Response{data=any}
+// @router /api/oauth/data/{id} [get]
 func getData(c *gin.Context) {
 	id := c.Param("id")
 	Store, ok := storeMap[id]
@@ -165,20 +194,18 @@ func callback(c *gin.Context) {
 	}
 
 	p := oauthConfigMap[Store.Platform]
-	web := conf.Conf.Web
-	cfg := *p()
-	cfg.RedirectURL = fmt.Sprintf("http://%s:%d/api/oauth/callback", web.Host, web.Port)
+	cfg := p()
 
 	var data any
 	var err error
 
 	switch Store.Platform {
 	case Google:
-		data, err = google.GetData(code, &cfg)
+		data, err = google.GetData(code, cfg)
 	case Discord:
-		data, err = discord.GetData(code, &cfg)
+		data, err = discord.GetData(code, cfg)
 	case Line:
-		data, err = line.GetData(code, &cfg)
+		data, err = line.GetData(code, cfg)
 	default:
 		err = ErrInvalidPlatform
 	}
