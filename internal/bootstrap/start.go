@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"string_backend_0001/internal/grpc"
 	"string_backend_0001/internal/logger"
 	"string_backend_0001/internal/web"
 )
@@ -29,6 +30,14 @@ func Start() {
 		err := web.Run()
 		if err != nil {
 			logger.Error("web server error: %+v", err)
+			return
+		}
+	}()
+
+	go func() {
+		err := grpc.Run()
+		if err != nil {
+			logger.Error("grpc server error: %+v", err)
 			return
 		}
 	}()

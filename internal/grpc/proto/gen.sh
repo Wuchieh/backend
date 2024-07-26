@@ -1,0 +1,1 @@
+protoc .\demo.proto  --go_out=../rpc --go-grpc_out=../rpc
