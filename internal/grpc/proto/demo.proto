@@ -1,0 +1,23 @@
+syntax = "proto3";
+import "google/protobuf/any.proto";
+option go_package = "../rpc";
+
+package rpc;
+
+// [標籤(可選)] [類型] [自段名稱] = [欄位編號(建議1~15)]
+// 標籤 = optional(可選)/repeated(可重複)/map #若不填寫則是必填
+// map<[type], [type]> [name] = [index];
+
+message HelloReq{
+  string name = 1;
+}
+
+message BaseResponse{
+  int32 code = 1;
+  string message = 2;
+  google.protobuf.Any data = 3;
+}
+
+service HelloService {
+  rpc Hello(HelloReq) returns (BaseResponse);
+}

@@ -6,3 +6,4 @@ database.db*
 config.json
 backend.log
 client_secret_*.json
+*.exe
