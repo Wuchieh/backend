@@ -35,6 +35,13 @@ func Run() error {
 }
 
 func Close() error {
-	rpcServer.Stop()
+	if rpcServer == nil {
+		rpcServer.Stop()
+	}
+
+	if ser == nil {
+		return nil
+	}
+
 	return ser.Close()
 }

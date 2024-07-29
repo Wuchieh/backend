@@ -39,7 +39,7 @@ go mod init
 ### Execution
 
 ```shell
-swag init
+swag init --parseDependency --parseInternal
 go build . -o backend && ./backend
 ```
 

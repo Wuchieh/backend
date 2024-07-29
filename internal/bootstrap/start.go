@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"string_backend_0001/internal/grpc"
 	"string_backend_0001/internal/logger"
 	"string_backend_0001/internal/web"
 )
@@ -34,13 +33,14 @@ func Start() {
 		}
 	}()
 
-	go func() {
-		err := grpc.Run()
-		if err != nil {
-			logger.Error("grpc server error: %+v", err)
-			return
-		}
-	}()
+	// 啟用 grpc server
+	//go func() {
+	//	err := grpc.Run()
+	//	if err != nil {
+	//		logger.Error("grpc server error: %+v", err)
+	//		return
+	//	}
+	//}()
 
 	pause()
 }
