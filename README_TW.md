@@ -33,7 +33,7 @@
 go install github.com/swaggo/swag/cmd/swag@latest
 git clone https://github.com/Wuchieh/backend.git
 cd backend
-go mod init
+go mod tidy
 ```
 
 ### 執行
