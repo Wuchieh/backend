@@ -7,6 +7,7 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"string_backend_0001/internal/conf"
+	"string_backend_0001/internal/logger"
 	"string_backend_0001/pkg"
 	"string_backend_0001/sdk/line"
 )
@@ -49,6 +50,35 @@ func Router(r *gin.RouterGroup) {
 }
 
 func callback(c *gin.Context) {
+	callbackErr := c.Query("error")
+	if callbackErr != "" {
+		handler, err := line.ErrHandler(c.FullPath())
+		if err != nil {
+			logger.Error("%+v", err)
+			c.JSON(pkg.CreateResponse(http.StatusInternalServerError, "undefined error"))
+		} else {
+			switch handler.Type {
+			case line.ErrInvalidRequest:
+
+			case line.ErrAccessDenied:
+				c.JSON(pkg.CreateResponse(http.StatusUnauthorized, "登入失敗, 用戶拒絕登入"))
+			case line.ErrUnsupportedResponseType:
+				logger.Error("line oauth callback error type: %s, description:%s", handler.Type, handler.Description)
+				c.JSON(pkg.CreateResponse(http.StatusInternalServerError, "請聯繫管理員"))
+			case line.ErrInvalidScope:
+				logger.Error("line oauth callback error type: %s, description:%s", handler.Type, handler.Description)
+				c.JSON(pkg.CreateResponse(http.StatusInternalServerError, "請聯繫管理員"))
+			case line.ErrServerError:
+				logger.Error("line oauth callback error type: %s, description:%s", handler.Type, handler.Description)
+				c.JSON(pkg.CreateResponse(http.StatusInternalServerError, "line 登入伺服器錯誤"))
+			default:
+				logger.Error("line oauth callback error type: %s, description:%s", handler.Type, handler.Description)
+				c.JSON(pkg.CreateResponse(http.StatusInternalServerError, "發生未知錯誤"))
+			}
+		}
+		return
+	}
+
 	state := c.Query(STATE)
 	if state != STATE {
 		c.JSON(pkg.CreateResponse(http.StatusUnauthorized, "invalid csrf token"))
