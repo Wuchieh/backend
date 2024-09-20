@@ -3,6 +3,7 @@ package line
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -281,6 +282,10 @@ func (o *Oauth2) DeauthorizeYourAppToWhichTheUserHasGrantedPermissions(userAcces
 }
 
 func (o *Oauth2) VerifyIDToken(clientId string, option ...VerifyIDTokenOption) (*VerifyIDToken, error) {
+	if o.IdToken == "" {
+		return nil, errors.New("not get id token")
+	}
+
 	data := url.Values{}
 	data.Add("id_token", o.IdToken)
 	data.Add("client_id", clientId)
@@ -305,6 +310,12 @@ func (o *Oauth2) VerifyIDToken(clientId string, option ...VerifyIDTokenOption) (
 		return nil, err
 	}
 	defer func() { resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		var lineErr RespError
+		err = RespUnmarshal(resp, &lineErr)
+		return nil, &lineErr
+	}
 
 	var v VerifyIDToken
 	err = RespUnmarshal(resp, &v)

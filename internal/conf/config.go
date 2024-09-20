@@ -80,7 +80,7 @@ func GetDefaultConfig() *Config {
 				IDToken:            false,
 				DisplayName:        false,
 				ProfileImageURL:    false,
-				EmailAddress:       false,
+				EmailAddress:       true,
 			}),
 		},
 		DiscordOauth: DiscordOauth{

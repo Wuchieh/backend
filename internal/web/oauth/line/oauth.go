@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"net/http"
+	"slices"
 	"string_backend_0001/internal/conf"
 	"string_backend_0001/internal/logger"
 	"string_backend_0001/pkg"
@@ -59,7 +60,7 @@ func callback(c *gin.Context) {
 		} else {
 			switch handler.Type {
 			case line.ErrInvalidRequest:
-
+				c.JSON(pkg.CreateResponse(http.StatusBadRequest, fmt.Sprintf("登入失敗, %s", handler.Description)))
 			case line.ErrAccessDenied:
 				c.JSON(pkg.CreateResponse(http.StatusUnauthorized, "登入失敗, 用戶拒絕登入"))
 			case line.ErrUnsupportedResponseType:
@@ -94,9 +95,11 @@ func callback(c *gin.Context) {
 
 	c.Set(pkg.Line, userInfo)
 	c.Next()
+
 	if c.IsAborted() {
 		return
 	}
+
 	c.JSON(pkg.CreateSuccessResponse(userInfo))
 }
 
@@ -119,6 +122,15 @@ func getUserDataFromLine(code string, config ...*oauth2.Config) (*line.Profile, 
 	}
 
 	Oauth2 := line.CreateOauth2(token, code)
+
+	if slices.Contains(cfg.Scopes, "openid") {
+		idToken, err := Oauth2.VerifyIDToken(cfg.ClientID)
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println(idToken)
+	}
 
 	return Oauth2.GetProfile()
 }

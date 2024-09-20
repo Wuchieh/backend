@@ -20,7 +20,16 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("%+v", e)
+	return fmt.Sprintf("type: %s, description: %s", e.Type, e.Description)
+}
+
+type RespError struct {
+	Type        string `json:"error"`
+	Description string `json:"error_description"`
+}
+
+func (e *RespError) Error() string {
+	return fmt.Sprintf("type: %s, description: %s", e.Type, e.Description)
 }
 
 func ErrHandler(fullUrl string) (*Error, error) {
